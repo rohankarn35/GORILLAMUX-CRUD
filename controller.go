@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -76,5 +78,39 @@ func updateProfile(w http.ResponseWriter, r *http.Request) {
 
 func deleteProfile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)["id"]
+	_id, err := primitive.ObjectIDFromHex(params)
+	if err != nil {
+		log.Fatal(err)
+	}
+	opts := options.Delete().SetCollation(&options.Collation{})
+	res, err := userCollection.DeleteOne(context.TODO(), bson.D{{Key: "_id", Value: _id}}, opts)
+	if err != nil {
+		log.Fatal(err)
+	}
+	json.NewEncoder(w).Encode(res.DeletedCount)
 
+}
+
+func getAllUsers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var results []primitive.M
+	cur, err := userCollection.Find(context.TODO(), bson.D{{}})
+	if err != nil {
+
+		fmt.Println(err)
+
+	}
+	for cur.Next(context.TODO()) {
+
+		var elem primitive.M
+		err := cur.Decode(&elem)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		results = append(results, elem)
+	}
+	cur.Close(context.TODO())
+	json.NewEncoder(w).Encode(results)
 }

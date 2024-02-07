@@ -11,7 +11,7 @@ func main() {
 	routes := mux.NewRouter()
 	s := routes.PathPrefix("/api").Subrouter()
 	s.HandleFunc("/createProfile", createProfile).Methods("POST")
-	// s.HandleFunc("/getAllUsers", getAllUsers).Methods("GET")
+	s.HandleFunc("/getAllUsers", getAllUsers).Methods("GET")
 	s.HandleFunc("/getUserProfile", getUserProfile).Methods("POST")
 	s.HandleFunc("/updateProfile", updateProfile).Methods("PUT")
 	s.HandleFunc("/deleteProfile/{id}", deleteProfile).Methods("DELETE")
