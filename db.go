@@ -10,7 +10,7 @@ import (
 )
 
 func db() *mongo.Client {
-	clientoptions := options.Client().ApplyURI("mongodb+srv://karnrohan12:rohankarn12@rohan.jztqjky.mongodb.net/?retryWrites=true&w=majority")
+	clientoptions := options.Client().ApplyURI("mongodb+srv://.jztqjky.mongodb.net/?retryWrites=true&w=majority")
 	client, err := mongo.Connect(context.TODO(), clientoptions)
 	if err != nil {
 		log.Fatal(err)
